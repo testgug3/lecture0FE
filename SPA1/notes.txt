@@ -1,0 +1,2 @@
+updating url for spa application
+using html5 url history api

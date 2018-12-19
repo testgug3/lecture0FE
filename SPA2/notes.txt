@@ -1,0 +1,7 @@
+updating url for spa application
+using html5 url history api
+
+a stack of history link has been pushed
+it also needs to be poped when user goes back/forth
+and page also needs to be updated.
+
