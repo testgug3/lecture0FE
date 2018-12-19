@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+    <script>
+      //template for roll results
+      const template = Handlebars.compile('<li>You rolled a {{ value }}</li>');
+
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('#roll').onclick = () => {
+            //generate a random roll
+            const roll = Math.floor((Math.random() * 6) + 1);
+
+            //Add roll result to DOM
+            const content = template({'value': roll});
+            document.querySelector('#rolls').innerHTML += content;
+        };
+      });
+    </script>
+</head>
+<body>
+    <button id="roll">Roll</button>
+    <ul id="rolls"></ul>
+</body>
+</html>

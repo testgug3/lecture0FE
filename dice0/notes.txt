@@ -1,0 +1,2 @@
+templating engine handlebars is used
+there are also other like lodash

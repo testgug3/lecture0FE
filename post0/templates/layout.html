@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        .post{
+            text-decoration: darkgrey;
+            font-family: 'Courier New', Courier, monospace;
+            background-color:burlywood;
+            line-height: 5em;
+            margin: 5px;
+            padding: 5px;
+        }
+    </style>
+    <script>
+        //start with post
+        let counter = 1;
+
+        //load posts 20 at a time
+        const quantity = 20;
+
+        //when dom loads, render the first 20 posts
+        document.addEventListener('DOMContentLoaded', load);
+
+        window.onscroll = () => {
+            if(window.innerHeight + window.scrollY >= document.body.offsetHeight){
+                load();
+            }
+        };
+
+        function load() {
+            //set start and end post numbers, and update counter.
+            const start = counter;
+            const end = start + quantity - 1;
+            counter = end + 1;
+
+            //open new request to get new post
+            const request = new XMLHttpRequest();
+            request.open('POST', '/posts');
+            request.onload = () => {
+                const data = JSON.parse(request.responseText);
+                console.log(data);
+                data.forEach(add_post);
+            };
+
+            //add start and end points to request data.
+            const data = new FormData();
+            data.append('start', start);
+            data.append('end', end);
+
+            //send request
+            request.send(data);
+        };
+
+        //add a new post with give contents to dom
+        function add_post(contents){
+            //create a new post
+            const post = document.createElement('div');
+            post.className = 'post';
+            post.innerHTML = contents;
+
+            //add post to dom
+            document.querySelector('#posts').append(post);
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% block body %}
+        {% endblock %}
+    </div>
+</body>
+</html>
