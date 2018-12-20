@@ -1,0 +1,116 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            @keyframes hide {
+                from {
+                    opacity: 1;
+                } 
+                to {
+                    opacity: 0;
+                }
+            }
+            .post{
+                text-decoration: darkgrey;
+                font-family: 'Courier New', Courier, monospace;
+                background-color:burlywood;
+                line-height: 5em;
+                margin: 5px;
+                padding: 5px;
+                animation-name: hide;
+                animation-duration: 2s;
+                animation-fill-mode: forwards;
+                animation-play-state: paused;
+            }
+            .hide {
+                float: right;
+            }
+
+            body {
+                padding-bottom: 50px;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+        <script id="post" type="text/x-handlebars-template">
+            <div class="post">
+                <!-- the raw is jinja syntax to ignore the content 
+                between them so that it wont get replaced by flask
+                and handle bar content will be placed there -->
+                {% raw -%} 
+                    {{ contents }}
+                {%- endraw %}
+                <button class="hide">Hide</button>
+            </div>
+        </script>
+        <script>
+        //start with post
+        let counter = 1;
+    
+    //load posts 20 at a time
+    const quantity = 20;
+    
+    //when dom loads, render the first 20 posts
+    document.addEventListener('DOMContentLoaded', load);
+    
+    window.onscroll = () => {
+        if(window.innerHeight + window.scrollY >= document.body.offsetHeight){
+            load();
+        }
+    };
+    
+    // If hide button is clicked, delete the post.
+    document.addEventListener('click', event => {
+        const element = event.target;
+        if (element.className === 'hide') {
+            element.parentElement.style.animationPlayState = 'running';
+            element.parentElement.addEventListener('animationend', () => {
+                element.parentElement.remove();
+            });
+        }
+    });
+
+    function load() {
+        //set start and end post numbers, and update counter.
+        const start = counter;
+        const end = start + quantity - 1;
+        counter = end + 1;
+    
+        //open new request to get new post
+        const request = new XMLHttpRequest();
+        request.open('POST', '/posts');
+        request.onload = () => {
+            const data = JSON.parse(request.responseText);
+            console.log(data);
+            data.forEach(add_post);
+        };
+    
+        //add start and end points to request data.
+        const data = new FormData();
+        data.append('start', start);
+        data.append('end', end);
+    
+        //send request
+        request.send(data);
+    };
+          const post_template = Handlebars.compile(document.querySelector('#post').innerHTML);
+          //add a new post with give contents to dom
+          function add_post(contents){
+                //create new post
+                const post = post_template({'contents': contents});
+    
+                //add post to dom
+                document.querySelector('#posts').innerHTML += post;
+            };
+        </script>
+    </head>
+    <body>
+            <div class="container">
+                    {% block body %}
+                    {% endblock %}
+                </div>    
+    </body>
+    </html>

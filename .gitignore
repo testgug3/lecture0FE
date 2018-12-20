@@ -6,3 +6,4 @@ Scripts/
 pip-selfcheck.json
 pyvenv.cfg
 img/
+start_app.bat
